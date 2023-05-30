@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Block Breaking Game</title>
+  <style>
+    #game-container {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      margin: 0 auto;
+      border: 1px solid black;
+    }
+
+    .block {
+      position: absolute;
+      width: 50px;
+      height: 20px;
+      background-color: red;
+    }
+
+    #paddle {
+      position: absolute;
+      width: 80px;
+      height: 10px;
+      background-color: blue;
+    }
+
+    #ball {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="paddle"></div>
+    <div id="ball"></div>
+    <div class="block" style="top: 50px; left: 100px;"></div>
+    <div class="block" style="top: 50px; left: 200px;"></div>
+    <div class="block" style="top: 50px; left: 300px;"></div>
+    <!-- Add more blocks here -->
+  </div>
+
+  <script>
+    // Get DOM elements
+    const gameContainer = document.getElementById('game-container');
+    const paddle = document.getElementById('paddle');
+    const ball = document.getElementById('ball');
+    const blocks = document.getElementsByClassName('block');
+
+    // Set initial positions
+    let paddleX = 160;
+    let ballX = 195;
+    let ballY = 195;
+
+    // Add event listener for paddle movement
+    document.addEventListener('mousemove', function(event) {
+      paddleX = event.clientX - gameContainer.offsetLeft - 40;
+      paddle.style.left = paddleX + 'px';
+    });
+
+    // Function to update ball position
+    function updateBallPosition() {
+      ballX += 1;
+      ballY += 1;
+      ball.style.left = ballX + 'px';
+      ball.style.top = ballY + 'px';
+    }
+
+    // Function to check for collisions
+    function checkCollisions() {
+      // Check for collision with blocks
+      for (let i = 0; i < blocks.length; i++) {
+        const block = blocks[i];
+        if (
+          ballX < block.offsetLeft + block.offsetWidth &&
+          ballX + ball.offsetWidth > block.offsetLeft &&
+          ballY < block.offsetTop + block.offsetHeight &&
+          ballY + ball.offsetHeight > block.offsetTop
+        ) {
+          block.remove();
+        }
+      }
+
+      // Check for collision with walls
+      if (ballX < 0 || ballX > gameContainer.offsetWidth - ball.offsetWidth) {
+        ballX = 195;
+      }
+      if (ballY < 0) {
+        ballY = 195;
+      }
+      if (ballY > gameContainer.offsetHeight - ball.offsetHeight) {
+        alert('Game Over');
+        location.reload();
+      }
+    }
+
+    // Game loop
+    function gameLoop() {
+      updateBallPosition();
+      checkCollisions();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game loop
+    gameLoop();
+  </script>
+</body>
+</html>
